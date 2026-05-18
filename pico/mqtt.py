@@ -147,8 +147,14 @@ class MqttBridge:
         )
         self.client.publish(self.topics["availability"], b"online", retain=True)
         self.client.subscribe(self.topics["command"])
-        # Publish a baseline state so HA has something to show.
-        self.publish_state({"state": "OFF"})
+        # Re-publish the last state we know about, if any. We deliberately do
+        # NOT publish a baseline OFF here: a transient MQTT reconnect would
+        # otherwise flip HA's view to OFF even though the LED panel itself is
+        # still whatever we last set it to. If last_state is None (first run),
+        # HA's MQTT entity shows "unknown" until the first user action — that's
+        # the honest answer since we don't query the device for its real state.
+        if self.last_state is not None:
+            self.publish_state(self.last_state)
 
     def publish_state(self, state):
         if self.client is None:
