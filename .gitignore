@@ -1,0 +1,15 @@
+# Install-specific config (secrets, install-specific MACs/IPs).
+# The .example template is committed; the real file is host-local.
+pico/config.py
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.mpy
+
+# Editor / OS
+.DS_Store
+*.swp
+.vscode/
+.idea/

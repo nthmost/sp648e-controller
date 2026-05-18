@@ -1,0 +1,30 @@
+# sp648e-controller — runtime config template.
+# Copy to pico/config.py and fill in your install-specific values.
+# pico/config.py is gitignored so secrets never land in this repo.
+
+# WiFi: primary and optional fallback (set FALLBACK to ("", "") to disable).
+WIFI_PRIMARY = ("YourSSID", "your-wifi-password")
+WIFI_FALLBACK = ("", "")
+
+# The BLE MAC of your SP648E (find it with a BLE scanner like nRF Connect,
+# or have the Pico scan once with: aioble.scan() and look for name "SP648E").
+SP648E_MAC = "aa:bb:cc:dd:ee:ff"
+SP648E_NAME = "SP648E"
+
+# HTTP API port (LAN-only; no auth, intended for ad-hoc scripts on the
+# same network).
+HTTP_PORT = 8080
+
+# MQTT / Home Assistant. Set MQTT_ENABLED=False to run HTTP-only.
+MQTT_ENABLED = True
+MQTT_HOST = "homeassistant.local"     # or the LAN IP of the broker
+MQTT_PORT = 1883
+MQTT_USER = "your-mqtt-user"
+MQTT_PASS = "your-mqtt-password"
+
+# Device identity for HA MQTT discovery. Change DEVICE_ID if you have more
+# than one sp648e-controller on the same broker, to avoid topic collisions.
+DEVICE_ID = "sp648e_main"
+DEVICE_NAME = "SP648E"
+DEVICE_AREA = "Living Room"           # HA area suggestion (or None)
+HA_DISCOVERY_PREFIX = "homeassistant" # match your HA's MQTT discovery prefix
