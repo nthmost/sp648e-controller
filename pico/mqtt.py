@@ -35,6 +35,14 @@ def _discovery_payload(topics):
         "has_entity_name": True,
         "unique_id": config.DEVICE_ID,
         "schema": "json",
+        # Optimistic mode: HA treats its own commands as the source of truth
+        # for the entity state and only weakly subscribes to state_topic for
+        # observation. Without this, any spurious state-topic publish (e.g.
+        # a transient MQTT reconnect republishing a stale baseline) flips HA's
+        # view incorrectly. We still expose state_topic so HA can pick up
+        # state changes that legitimately originate at the device, but the
+        # source-of-truth flag stays on the command side.
+        "optimistic": True,
         "state_topic": topics["state"],
         "command_topic": topics["command"],
         "availability_topic": topics["availability"],
