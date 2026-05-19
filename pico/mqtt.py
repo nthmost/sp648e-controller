@@ -9,6 +9,7 @@ HA MQTT JSON Light schema:
 """
 
 import json
+import time
 import uasyncio as asyncio
 from umqtt.simple import MQTTClient
 
@@ -182,12 +183,21 @@ class MqttBridge:
             print("mqtt: disabled (config.MQTT_ENABLED is False)")
             return
         backoff = 1
+        # Send PINGREQ at half the keepalive interval so we never time out.
+        # Conservative margin: if any single ping fails (network blip), we'll
+        # still have keepalive/2 of slack before the broker disconnects us.
+        ping_interval_ms = (300 // 2) * 1000  # 150s, matching keepalive=300
+        last_ping_ms = 0
         while True:
             try:
                 await self._connect()
                 backoff = 1
+                last_ping_ms = time.ticks_ms()
                 while True:
                     self.client.check_msg()
+                    if time.ticks_diff(time.ticks_ms(), last_ping_ms) >= ping_interval_ms:
+                        self.client.ping()
+                        last_ping_ms = time.ticks_ms()
                     await asyncio.sleep_ms(200)
             except Exception as e:
                 print("mqtt: error:", repr(e))
