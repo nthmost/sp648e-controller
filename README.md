@@ -44,6 +44,7 @@ pico/
   boot.py           — minimal, runs main (with skip-main rescue file)
 docs/
   protocol-notes.md — intel mined from uniled (packet format, command bytes, GATT layout)
+  multi-device-plan.md — concrete plan for refactoring this Pico to drive N devices (deferred until second device is on hand to test against)
 ```
 
 ## Deploy
