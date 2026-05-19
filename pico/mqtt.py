@@ -82,7 +82,11 @@ class MqttBridge:
             port=config.MQTT_PORT,
             user=config.MQTT_USER or None,
             password=config.MQTT_PASS or None,
-            keepalive=60,
+            # 5-minute keepalive: gives our event loop a wide margin so that
+            # transient BLE work or other long async tasks don't starve check_msg()
+            # past the broker's timeout. With keepalive=60 we observed reconnects
+            # every ~90s in practice — the longer interval makes them rare.
+            keepalive=300,
         )
         c.set_last_will(self.topics["availability"], b"offline", retain=True)
         c.set_callback(self._on_message)
